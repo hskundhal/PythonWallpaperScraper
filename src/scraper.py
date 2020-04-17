@@ -11,7 +11,7 @@ def scraper():
     if not os.path.isdir("../scraped/" + searchkeyword):
         os.mkdir("../scraped/" + searchkeyword)
     print(" searching on bing.com")
-    param = {"q": searchkeyword, "qft": "+filterui:imagesize-wallpaper"}
+    param = {"q": searchkeyword, "qft": "+filterui:imagesize-wallpaper", "pq": searchkeyword}
     search_url = "https://www.bing.com/images/search"
     data = requests.get(search_url, params=param)
     beautifulsoup = BeautifulSoup(data.text, "html.parser")
@@ -21,9 +21,9 @@ def scraper():
             img_url = requests.get(items.attrs["href"])
             filename = items.attrs["href"].split("/")[-1]
             img = Image.open(BytesIO(img_url.content))
-            # print("size of image is :", img.size)
-            if img.size[0] > 500:
-                print(" \n **************Saving file from :", items.attrs["href"], " \n with display size : ", img.size)
+            # print("size of image is :", img.size, img.height, img.info)
+            if img.height > 700:
+                print("  **************Saving file from :", items.attrs["href"], " with display size : ", img.size)
                 img.save("../scraped/" + searchkeyword + "/" + filename, img.format)
         except:
             print("save failed for file at ", items.attrs["href"])
