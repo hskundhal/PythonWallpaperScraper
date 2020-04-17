@@ -2,11 +2,14 @@ from PIL import Image
 import requests
 from bs4 import BeautifulSoup
 from io import BytesIO
+import os
 
 
 def scraper():
     print("words to search online:")
     searchkeyword = input()
+    if not os.path.isdir("../scraped/" + searchkeyword):
+        os.mkdir("../scraped/" + searchkeyword)
     print(" searching on bing.com")
     param = {"q": searchkeyword, "qft": "+filterui:imagesize-wallpaper"}
     search_url = "https://www.bing.com/images/search"
@@ -18,12 +21,12 @@ def scraper():
             img_url = requests.get(items.attrs["href"])
             filename = items.attrs["href"].split("/")[-1]
             img = Image.open(BytesIO(img_url.content))
-            print("size of image is :", img.size)
+            # print("size of image is :", img.size)
             if img.size[0] > 500:
-                print(" **************Saving file from :", filename, " with display size : ", img.size)
-                img.save("../scraped/" + filename, img.format)
+                print(" \n **************Saving file from :", items.attrs["href"], " \n with display size : ", img.size)
+                img.save("../scraped/" + searchkeyword + "/" + filename, img.format)
         except:
-            print("save failed")
+            print("save failed for file at ", items.attrs["href"])
 
     scraper()
 
